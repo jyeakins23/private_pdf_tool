@@ -2,10 +2,14 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+// next-intl 플러그인 래퍼
+const withNextIntl = createNextIntlPlugin();
+
 const nextConfig: NextConfig = {
-  // ❌ i18n 블록 제거 (App Router 비지원)
-  experimental: {},
+  reactStrictMode: true,
+  // experimental 옵션 필요 시 여기서만 추가
+  // experimental: { /* ... */ },
 };
 
-const withNextIntl = createNextIntlPlugin();
-export default nextConfig;
+// 플러그인 적용한 구성 내보내기
+export default withNextIntl(nextConfig);

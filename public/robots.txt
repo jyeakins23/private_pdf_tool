@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://securepdftool.com
+
+# Sitemaps
+Sitemap: https://securepdftool.com/sitemap.xml
