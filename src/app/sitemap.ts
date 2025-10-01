@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '',                 // 홈 (/[locale])
     'privacy',          // /[locale]/privacy
     // 필요시 기능별 랜딩을 따로 두면 여기에 추가:
-    // 'merge', 'compress', 'tables'
+    'merge', 'compress', 'tables'
   ];
 
   const lastmod = new Date();
