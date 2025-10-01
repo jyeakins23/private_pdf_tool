@@ -47,7 +47,7 @@ export default async function RootLayout({
 
   const messages = (await import(`@/i18n/messages/${locale}.json`)).default;
 
-  // GA 측정 ID (.env.local에 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXX)
+  // GA 측정 ID (.env.local: NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXX)
   const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   return (
@@ -77,34 +77,37 @@ export default async function RootLayout({
             });
           `}
         </Script>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-13KTKK3R3Q"></script>
-        {/* AdSense 로더: Next <Script> 대신 일반 <script> 사용(경고 회피) */}
+
+        {/* AdSense 로더: Next <Script> 대신 일반 <script> 사용(AdSense 경고 회피) */}
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7959771468883592"
           crossOrigin="anonymous"
         ></script>
 
-        {/* Google Analytics 4 (gtag.js) — env에 GA_ID 있을 때만 주입 */}
+        {/* ✅ GA4 gtag.js: Next <Script> 사용 → Vercel 경고 해소 */}
         {GA_ID && (
           <>
-            {/* 로더 */}
-            <script
+            <Script
+              id="gtag-src"
               async
+              strategy="afterInteractive"
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            ></script>
-
-            {/* 초기화: SPA 중복 방지를 위해 send_page_view는 끄고, 라우팅 훅에서 전송 */}
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_ID}', { send_page_view: false });
-                `
-              }}
             />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                // SPA에서 페이지뷰는 Analytics 컴포넌트가 보냄
+                gtag('config', '${GA_ID}', { send_page_view: false });
+              `}
+            </Script>
+
+            {/* (선택) 테스트 편의를 위한 분석 동의 임시 부여 */}
+            {/* <Script id="consent-grant-analytics" strategy="afterInteractive">
+              {`gtag('consent','update',{analytics_storage:'granted'});`}
+            </Script> */}
           </>
         )}
       </head>
