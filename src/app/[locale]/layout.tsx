@@ -47,6 +47,9 @@ export default async function RootLayout({
 
   const messages = (await import(`@/i18n/messages/${locale}.json`)).default;
 
+  // GA 측정 ID (.env.local에 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXX)
+  const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang={locale}>
       <head>
@@ -55,7 +58,10 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://tpc.googlesyndication.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+
+        {/* PWA manifest */}
         <link rel="manifest" href="/manifest.webmanifest" />
+
         {/* Consent Mode v2 기본값(동의 전 비개인화) */}
         <Script id="consent-default" strategy="beforeInteractive">
           {`
@@ -72,34 +78,40 @@ export default async function RootLayout({
           `}
         </Script>
 
-        {/* AdSense (퍼블리셔 ID 교체) */}
-        <Script
-          id="adsense"
+        {/* AdSense 로더: Next <Script> 대신 일반 <script> 사용(경고 회피) */}
+        <script
           async
-          strategy="afterInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7959771468883592"
           crossOrigin="anonymous"
-        />
+        ></script>
 
-        {/* GA4 gtag.js 로더 */}
-        <Script
-          id="gtag-src"
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        {/* GA4 초기화(send_page_view는 라우팅 훅에서 직접 보냄) */}
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}', { send_page_view: false });
-          `}
-        </Script>
+        {/* Google Analytics 4 (gtag.js) — env에 GA_ID 있을 때만 주입 */}
+        {GA_ID && (
+          <>
+            {/* 로더 */}
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            ></script>
+
+            {/* 초기화: SPA 중복 방지를 위해 send_page_view는 끄고, 라우팅 훅에서 전송 */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_ID}', { send_page_view: false });
+                `
+              }}
+            />
+          </>
+        )}
       </head>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ServiceWorker />
+          {/* 라우트 변경마다 page_view 전송 */}
           <Suspense fallback={null}>
             <Analytics />
           </Suspense>

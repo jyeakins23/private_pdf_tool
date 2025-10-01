@@ -1,5 +1,5 @@
 // public/sw.js
-const VERSION = 'v3';
+const VERSION = 'v4'; // ← 버전 올려 강제 업데이트
 
 // 항상 존재하는 정적 파일만 프리캐시
 const CORE = [
@@ -13,7 +13,7 @@ self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
     const cache = await caches.open(VERSION);
     for (const url of CORE) {
-      try { await cache.add(url); } catch (_) { /* missing ok */ }
+      try { await cache.add(url); } catch (_) { /* optional */ }
     }
     self.skipWaiting();
   })());
@@ -27,26 +27,46 @@ self.addEventListener('activate', (e) => {
   })());
 });
 
-// 안전하게 캐시에 넣는 헬퍼
+// 안전하게 캐시에 넣는 헬퍼(동일 출처 & 200 OK & 기본 응답만)
 async function safePut(request, response) {
   try {
     if (request.method !== 'GET') return;
     if (!response || response.status !== 200) return;
-    // same-origin 응답만 (opaque 제외) — 개발/로컬에서 안전
-    if (response.type !== 'basic') return;
+    if (response.type !== 'basic') return; // cross-origin(opaque) 제외
     const cache = await caches.open(VERSION);
-    // 🔐 복제는 "put" 직전에 1번만
     await cache.put(request, response.clone());
   } catch (_) {
-    // 캐시 실패는 조용히 무시
+    // 캐시 실패는 무시
   }
 }
+
+// 광고/태그는 절대 가로채지 않음(네트워크 직행)
+const BYPASS_HOSTS = new Set([
+  'pagead2.googlesyndication.com',
+  'googleads.g.doubleclick.net',
+  'tpc.googlesyndication.com',
+  'www.googletagmanager.com'
+]);
 
 self.addEventListener('fetch', (e) => {
   const { request } = e;
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+
+  // 0) 광고/태그 도메인은 무조건 네트워크로
+  if (BYPASS_HOSTS.has(url.hostname)) {
+    e.respondWith(fetch(request));
+    return;
+  }
+
+  const sameOrigin = (url.origin === self.location.origin);
+
+  // 0.5) 교차 출처는 캐시/오프라인 개입 없이 네트워크로 통과
+  if (!sameOrigin) {
+    e.respondWith(fetch(request));
+    return;
+  }
 
   // 1) pdf.worker: Cache First
   if (url.pathname.endsWith('/pdf.worker.min.mjs')) {
@@ -72,7 +92,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // 3) 기본: Network First (+ offline fallback)
+  // 3) 기본: Network First (+ same-origin에 한해 offline fallback)
   e.respondWith((async () => {
     try {
       const res = await fetch(request);
