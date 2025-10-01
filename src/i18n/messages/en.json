@@ -1,0 +1,33 @@
+{
+  "app": {
+    "title": "Private PDF Tools — Merge · Compress · Table Extract",
+    "desc": "Free, no uploads, runs in your browser."
+  },
+  "tabs": {
+    "merge": "Merge",
+    "compress": "Compress",
+    "tables": "Table Extract"
+  },
+  "cta": {
+    "download": "Download"
+  },
+  "drop": {
+    "hint": "Drop PDF files here or click to select"
+  },
+  "merge": {
+    "action": "Merge PDFs"
+  },
+  "compress": {
+    "action": "Compress PDF",
+    "quality": "Quality"
+  },
+  "tables": {
+    "action": "Extract Tables (CSV)"
+  },
+  "footer": {
+    "privacy": "Privacy-first: files never leave your device."
+  },
+  "seo": {
+    "keywords": "pdf merge, pdf compress, extract tables, client-side, privacy"
+  }
+}

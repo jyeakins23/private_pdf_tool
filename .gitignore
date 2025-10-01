@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# next output
+.next/
+out/
+
+# env / local
+.env
+.env.*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# misc
+.DS_Store
+.vercel/
+coverage/
+
+# build caches
+.cache/
+turbo/
+
+# service worker generated caches (if any local)
+workbox-*
+
+# don't commit sample PDFs
+samples/*.pdf

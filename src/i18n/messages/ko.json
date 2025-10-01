@@ -1,0 +1,33 @@
+{
+  "app": {
+    "title": "개인정보 유출 없는 PDF 도구 — 합치기 · 압축 · 표 추출",
+    "desc": "무료, 업로드 없음, 브라우저에서만 실행합니다."
+  },
+  "tabs": {
+    "merge": "합치기",
+    "compress": "압축",
+    "tables": "표 추출"
+  },
+  "cta": {
+    "download": "다운로드"
+  },
+  "drop": {
+    "hint": "PDF를 드래그하거나 클릭하여 선택"
+  },
+  "merge": {
+    "action": "PDF 합치기"
+  },
+  "compress": {
+    "action": "PDF 압축",
+    "quality": "품질"
+  },
+  "tables": {
+    "action": "표 추출 (CSV)"
+  },
+  "footer": {
+    "privacy": "프라이버시 최우선: 파일은 기기를 벗어나지 않습니다."
+  },
+  "seo": {
+    "keywords": "pdf 합치기, pdf 압축, 표 추출, 클라이언트, 개인정보"
+  }
+}
