@@ -77,7 +77,7 @@ export default async function RootLayout({
             });
           `}
         </Script>
-
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-13KTKK3R3Q"></script>
         {/* AdSense 로더: Next <Script> 대신 일반 <script> 사용(경고 회피) */}
         <script
           async

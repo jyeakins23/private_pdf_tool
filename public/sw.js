@@ -1,5 +1,5 @@
 // public/sw.js
-const VERSION = 'v4'; // ← 버전 올려 강제 업데이트
+const VERSION = 'v5'; // ← 버전 올려 강제 업데이트
 
 // 항상 존재하는 정적 파일만 프리캐시
 const CORE = [
@@ -45,7 +45,9 @@ const BYPASS_HOSTS = new Set([
   'pagead2.googlesyndication.com',
   'googleads.g.doubleclick.net',
   'tpc.googlesyndication.com',
-  'www.googletagmanager.com'
+  'www.googletagmanager.com',
+  'www.google-analytics.com',       // ✅ 추가
+  'region1.google-analytics.com'    // ✅ 추가 (리전 수집 엔드포인트)
 ]);
 
 self.addEventListener('fetch', (e) => {
