@@ -7,6 +7,7 @@ import ServiceWorker from '@/components/ServiceWorker';
 import Analytics from '@/components/Analytics';
 import Script from 'next/script';
 
+// 이 블록만 교체: src/app/[locale]/layout.tsx 상단의 export const metadata
 export const metadata = {
   metadataBase: new URL('https://securepdftool.com'),
   title: {
@@ -20,7 +21,7 @@ export const metadata = {
     url: 'https://securepdftool.com',
     siteName: 'PDF Studio',
     images: [{ url: '/og.png', width: 1200, height: 630 }],
-    type: 'website'
+    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
@@ -28,8 +29,16 @@ export const metadata = {
     description: 'Private PDF tools in your browser',
     images: ['/og.png']
   },
-  icons: { icon: '/favicon.ico' }
-};
+  icons: { icon: '/favicon.ico' },
+  // ✅ SEO 강화: canonical + 언어 대체 링크
+  alternates: {
+    canonical: 'https://securepdftool.com',
+    languages: {
+      en: 'https://securepdftool.com/en',
+      ko: 'https://securepdftool.com/ko'
+    }
+  }
+} as const;
 
 export function generateStaticParams() {
   return [{locale: 'en'}, {locale: 'ko'}];
